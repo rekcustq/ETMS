@@ -77,53 +77,57 @@ if(strlen($_SESSION['uid']==0)) {
         </ol>
 
         <!-- Page Content -->
-        <h1 class="h3 mb-4">Change Password</h1>
-        <p style="font-size:16px; color: red" align="center"> 
-          <?php if($msg) {
-            echo $msg;
-          } ?> 
-        </p>
+        <div class="card mb-3">
+          <div class="card-body">
+            <h1 class="h3 mb-4">Change Password</h1>
+            <p style="font-size:16px; color: red" align="center"> 
+              <?php if($msg) {
+                echo $msg;
+              } ?> 
+            </p>
 
-        <form action="changepassword.php" method="post" onsubmit="return checkpass();">
-          <?php
-            $cid=$_SESSION['uid'];
-            $ret=mysqli_query($con,"select * from employees where empId='$cid'");
-            $cnt=1;
-            while ($row=mysqli_fetch_array($ret)) {
-          ?>
+            <form action="changepassword.php" method="post" onsubmit="return checkpass();">
+              <?php
+                $cid=$_SESSION['uid'];
+                $ret=mysqli_query($con,"select * from employees where empId='$cid'");
+                $cnt=1;
+                while ($row=mysqli_fetch_array($ret)) {
+              ?>
 
-          <div class="row">
-            <div class="col-1 mb-3"></div>
-            <div class="col-2 mb-3">Current Password</div>
-            <div class="col-8 mb-3">   
-              <input type="Password" class="form-control form-control-user" id="Password" name="currentpassword"  value="" required="true">
-            </div>
-          </div>  
-          <div class="row">
-            <div class="col-1 mb-3"></div>
-            <div class="col-2 mb-3">New Password </div>
-            <div class="col-8 mb-3">  
-              <input type="Password" class="form-control form-control-user" id="newpassword" name="newpassword"  value="" required="true">
-            </div>  
+              <div class="row">
+                <div class="col-1 mb-3"></div>
+                <div class="col-2 mb-3">Current Password</div>
+                <div class="col-8 mb-3">   
+                  <input type="Password" class="form-control form-control-user" id="Password" name="currentpassword"  value="" required="true">
+                </div>
+              </div>  
+              <div class="row">
+                <div class="col-1 mb-3"></div>
+                <div class="col-2 mb-3">New Password </div>
+                <div class="col-8 mb-3">  
+                  <input type="Password" class="form-control form-control-user" id="newpassword" name="newpassword"  value="" required="true">
+                </div>  
+              </div>
+              <div class="row">
+                <div class="col-1 mb-3"></div>
+                <div class="col-2 mb-3">Confirm Password </div>
+                <div class="col-8 mb-3">
+                  <input type="Password" class="form-control form-control-user" id="confirmpassword" name="confirmpassword"  value="" required="true">
+                </div>
+              </div>
+              <?php } ?>
+
+              <div class="row" style="margin-top:4%">
+                <div class="col-4"></div>
+                <div class="col-4">
+                  <input type="submit" name="submit"  value="Change" class="btn btn-primary btn-user btn-block">
+                </div>
+              </div>
+            
+            </form>
+
           </div>
-          <div class="row">
-            <div class="col-1 mb-3"></div>
-            <div class="col-2 mb-3">Confirm Password </div>
-            <div class="col-8 mb-3">
-              <input type="Password" class="form-control form-control-user" id="confirmpassword" name="confirmpassword"  value="" required="true">
-            </div>
-          </div>
-          <?php } ?>
-
-          <div class="row" style="margin-top:4%">
-            <div class="col-4"></div>
-            <div class="col-4">
-              <input type="submit" name="submit"  value="Change" class="btn btn-primary btn-user btn-block">
-            </div>
-          </div>
-        
-        </form>
-
+        </div>
       </div>
       <!-- /.container-fluid -->
 
