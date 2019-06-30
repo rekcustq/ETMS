@@ -1,19 +1,20 @@
 <?php
 session_start();
-error_reporting(0);
 include('includes/dbconnection.php');
-//error_reporting(0);
+error_reporting(0);
 if (strlen($_SESSION['uid']==0)) {
   header('location:logout.php');
 } else {
-
   if(isset($_POST['submit'])) {
-    $eid=$_SESSION['uid'];
-    $emp1name=$_POST['emp1name'];
+    $uid=$_SESSION['uid'];
+    $taskTitle=$_POST['taskTitle'];
+    $taskContent=$_POST['taskContent'];
+    $startTime=$_POST['startTime'];
+    $finishTime=$_POST['finishTime'];
     
-     $query=mysqli_query($con, "insert into empexpireince (EmpID,Employer1Name) value('$eid','$emp1name')");
+    $query=mysqli_query($con, "insert into tasks(taskCreator, taskTitle, taskContent, taskStartTime, taskFinishTime, taskStatus) values('$uid', '$taskTitle', '$taskContent', '$startTime', '$finishTime', '1')");
     if ($query) {
-      $msg="Your Expirence data has been submitted succeesfully.";
+      $msg="Task created succeesfully.";
     } else {
       $msg="Something Went Wrong. Please try again.";
     }
@@ -61,7 +62,7 @@ if (strlen($_SESSION['uid']==0)) {
         <!-- Breadcrumbs-->
         <ol class="breadcrumb">
           <li class="breadcrumb-item">
-            <a href="#">Dashboard</a>
+            <a href="welcome.php">Dashboard</a>
           </li>
           <li class="breadcrumb-item active">Tasks</li>
         </ol>
@@ -73,20 +74,93 @@ if (strlen($_SESSION['uid']==0)) {
             Tasks Form
           </div>
           <div class="card-body">
-            <form method="post" action="">
+            <p style="font-size:16px; color:green" align="center"> 
+              <?php if($msg) {
+                echo $msg;
+              } ?> 
+            </p>
+            <form action="" method="post">
               <div class="form-group">
                 <div class="form-label-group">
-                  <input type="title" name="title" id="inputTitle" class="form-control" placeholder="Title" autofocus="autofocus">
+                  <input type="title" name="taskTitle" id="inputTitle" class="form-control" placeholder="Title" autofocus="autofocus">
                   <label for="inputTitle">Title</label>
                 </div>
               </div>  
               <br>
               <div class="form-group">                  
                 <label for="inputDescription"><b>Description</b></label>
-                  <br>
-                  <textarea id="inputDescription" class="form-control" required="required" cols="10" rows="10"></textarea>
+                <br>
+                <textarea name="taskContent" id="inputDescription" class="form-control" required="required" cols="10" rows="10"></textarea>
               </div>
+              <div class="form-group">
+                <div class="form-label-group">
+                  <label for="startTime"><b>Start date:</b></label>
+                  <br><br>
+                  <input type="datetime-local" name="startTime" class="col-3 form-control" style="margin-bottom:10px;" autofocus="autofocus">
+                </div>
+              </div>  
+              <div class="form-group">
+                <div class="form-label-group">
+                  <label for="finishTime"><b>Finish date:</b></label>
+                  <br><br>
+                  <input type="datetime-local" name="finishTime" class="col-3 form-control" style="margin-bottom:10px;" autofocus="autofocus">
+                </div>
+              </div>  
               <br>
+              <input type="submit" class="col-3 btn btn-success btn-block" name="submit" value="Create Tasks">
+            </form>
+          </div>
+        </div>
+        <!-- Area Chart Example-->
+        <div class="add-task-btn col-12 col-md-3 col-lg-3 btn btn-success btn-block"> Add Task </div>
+        <div class="cancel-task-btn col-12 col-md-3 col-lg-3 btn btn-danger btn-block" hidden=""> Cancel </div>
+        <br>
+
+        <div class="card mb-3">
+          <div class="card-header">
+            <i class="fas fa-table"></i>
+            All tasks
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                  <tr>
+                    <th>Task no.</th>
+                    <th>Task Title</th>
+                    <th>Task Description</th>
+                    <th>Start Time</th>
+                    <th>Finish Time</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <?php
+                  $Id=$_SESSION("uid");
+                  $ret=mysqli_query($con,"select * from tasks");
+                  $cnt=1;
+                  while ($row=mysqli_fetch_array($ret)) {
+                    $tStat=$row['taskStatus'];
+                    $stat=mysqli_fetch_array(mysqli_query($con,"select statDescription from status where stat='$tStat'"));
+                  ?>
+                    <tr>
+                      <td><?php echo $cnt;?></td>
+                      <td><?php echo $row['taskTitle'];?></td>
+                      <td><?php echo $row['taskContent'];?></td>
+                      <td><?php echo $row['taskStartTime'];?></td>
+                      <td><?php echo $row['taskFinishTime'];?></td>
+                      <td><?php echo $stat['statDescription'];?></td>
+                      <td><a href="taskdetails.php?editid=<?php echo $row['taskId'];?>">Task Details</a></td>
+                    </tr>
+                  <?php 
+                  $cnt=$cnt+1;
+                  } ?>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!--
               <div class="employees-input">
                 <label for=""><b> Employee ID </b></label>
                 <div class="employee-template input-group" hidden>
@@ -102,28 +176,13 @@ if (strlen($_SESSION['uid']==0)) {
                 </div>
               </div>
               <input type="button" class="add-staff-btn col-12 col-md-2 col-lg-2 btn btn-primary btn-block" value="Add Staff">
-              <br>  
-              <input type="submit" class="col-3 btn btn-success btn-block" name="submit" value="Create Tasks">
-            </form>
-          </div>
+          -->
         </div>
-        <!-- Area Chart Example-->
-        <div class="add-task-btn col-12 col-md-3 col-lg-3 btn btn-success btn-block"> Add Task </div>
-        <div class="cancel-task-btn col-12 col-md-3 col-lg-3 btn btn-danger btn-block" hidden=""> Cancel </div>
-
-        <div></div>
-
       </div>
       <!-- /.container-fluid -->
 
       <!-- Sticky Footer -->
-      <footer class="sticky-footer">
-        <div class="container my-auto">
-          <div class="copyright text-center my-auto">
-            <span>Copyright by ©rekcusTQ</span>
-          </div>
-        </div>
-      </footer>
+      <?php include_once('includes/footer.php');?>
 
     </div>
     <!-- /.content-wrapper -->
@@ -163,15 +222,14 @@ if (strlen($_SESSION['uid']==0)) {
   <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
 
   <!-- Page level plugin JavaScript-->
-  <script src="vendor/chart.js/Chart.min.js"></script>
+  <script src="vendor/datatables/jquery.dataTables.min.js"></script>
+  <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
   <!-- Custom scripts for all pages-->
   <script src="js/sb-admin.min.js"></script>
 
   <!-- Demo scripts for this page-->
-  <script src="js/demo/chart-area-demo.js"></script>
-  <script src="js/demo/chart-bar-demo.js"></script>
-  <script src="js/demo/chart-pie-demo.js"></script>
+  <script src="js/demo/datatables-demo.js"></script>
 
 </body>
 
