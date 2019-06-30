@@ -64,50 +64,54 @@ if (strlen($_SESSION['uid']==0)) {
         </ol>
 
         <!-- Page Content -->
-        <h1 class="h3 mb-4">My Profile</h1>
+        <div class="card mb-3">
+          <div class="card-body">
+            <h1 class="h3 mb-4">My Profile</h1>
 
-        <p style="font-size:16px; color:green" align="center">
-          <?php if($msg) {
-            echo $msg;
-          } ?>
-        </p>
-        
-        <form class="user" method="post" action="">
-          <?php
-            $Id=$_SESSION['aid'];
-            $ret=mysqli_query($con,"select * from admin where id='$Id'");
-            $cnt=1;
-            while ($row=mysqli_fetch_array($ret)) { 
-          ?>
+            <p style="font-size:16px; color:green" align="center">
+              <?php if($msg) {
+                echo $msg;
+              } ?>
+            </p>
+            
+            <form class="user" method="post" action="">
+              <?php
+                $Id=$_SESSION['aid'];
+                $ret=mysqli_query($con,"select * from admin where id='$Id'");
+                $cnt=1;
+                while ($row=mysqli_fetch_array($ret)) { 
+              ?>
 
-          <div class="row">
-            <div class="col-4 mb-3">Admin Name</div>
-            <div class="col-8 mb-3">
-              <input type="text" name="Name" id="Name" class="form-control" required="required" autofocus="autofocus" value="<?php echo $row['name']; ?> ">
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-4 mb-3">Email Address</div>
-            <div class="col-8 mb-3">
-              <input type="email" name="Email" class="form-control" required="required" value="<?php echo $row['email']; ?>" readonly>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-4 mb-3">Admin Registration Date (yyyy-mm-dd)</div>
-            <div class="col-8  mb-3">
-              <input type="text" name="regDate" class="form-control"  value="<?php echo $row['regdate']; ?>" readonly>
-            </div>
-          </div>
+              <div class="row">
+                <div class="col-4 mb-3">Admin Name</div>
+                <div class="col-8 mb-3">
+                  <input type="text" name="Name" id="Name" class="form-control" required="required" autofocus="autofocus" value="<?php echo $row['name']; ?> ">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-4 mb-3">Email Address</div>
+                <div class="col-8 mb-3">
+                  <input type="email" name="Email" class="form-control" required="required" value="<?php echo $row['email']; ?>" readonly>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-4 mb-3">Admin Registration Date (yyyy-mm-dd)</div>
+                <div class="col-8  mb-3">
+                  <input type="text" name="regDate" class="form-control"  value="<?php echo $row['regdate']; ?>" readonly>
+                </div>
+              </div>
 
-          <?php } ?>
-          <div class="row" style="margin-top:2%">
-            <div class="col-4"></div>
-            <div class="col-4">
-              <input type="submit" name="submit" value="Update" class="btn btn-primary btn-user btn-block">
-            </div>
-          </div>
-        </form>
+              <?php } ?>
+              <div class="row" style="margin-top:2%">
+                <div class="col-4"></div>
+                <div class="col-4">
+                  <input type="submit" name="submit" value="Update" class="btn btn-primary btn-user btn-block">
+                </div>
+              </div>
+            </form>
 
+          </div>
+        </div>
       </div>
       <!-- /.container-fluid -->
 

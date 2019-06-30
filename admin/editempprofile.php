@@ -2,8 +2,7 @@
 session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
-//error_reporting(0);
-if (strlen($_SESSION['aid']==0)) {
+if(strlen($_SESSION['aid']==0)) {
   header('location:logout.php');
 } else {
   if(isset($_POST['submit'])) {
@@ -68,78 +67,82 @@ if (strlen($_SESSION['aid']==0)) {
         </ol>
 
         <!-- Page Content -->
-        <h1 class="h3 mb-4">Edit Employee Profile</h1>
+        <div class="card mb-3">
+          <div class="card-body">
+            <h1 class="h3 mb-4">Edit Employee Profile</h1>
 
-        <p style="font-size:16px; color:green" align="center">
-          <?php if($msg) {
-            echo $msg;
-          } ?>
-        </p>
-        
-        <form class="user" method="post" action="">
-          <?php
-            $Id=$_GET['editid'];
-            $ret=mysqli_query($con,"select * from employees where empId='$Id'");
-            $cnt=1;
-            while ($row=mysqli_fetch_array($ret)) { 
-          ?>
+            <p style="font-size:16px; color:green" align="center">
+              <?php if($msg) {
+                echo $msg;
+              } ?>
+            </p>
+            
+            <form class="user" method="post" action="">
+              <?php
+                $Id=$_GET['editid'];
+                $ret=mysqli_query($con,"select * from employees where empId='$Id'");
+                $cnt=1;
+                while ($row=mysqli_fetch_array($ret)) { 
+              ?>
 
-          <div class="row">
-            <div class="col-4 mb-3">Name</div>
-            <div class="col-8 mb-3">
-              <input type="text" name="Name" id="Name" class="form-control" required="required" autofocus="autofocus" value="<?php echo mb_convert_encoding($row['empName'], "HTML-ENTITIES", "UTF-8"); ?> ">
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-4 mb-3">Gender</div>
-              <?php 
-                if($row['empGender']=="Male") { 
-              ?>
-              <div class="col-md-1">
-                <input type="radio" name="Gender" value="Male" checked />Male
+              <div class="row">
+                <div class="col-4 mb-3">Name</div>
+                <div class="col-8 mb-3">
+                  <input type="text" name="Name" id="Name" class="form-control" required="required" autofocus="autofocus" value="<?php echo mb_convert_encoding($row['empName'], "HTML-ENTITIES", "UTF-8"); ?> ">
+                </div>
               </div>
-              <div class="col-md-2">
-                <input type="radio" name="Gender" value="Female" />Female
+              <div class="row">
+                <div class="col-4 mb-3">Gender</div>
+                  <?php 
+                    if($row['empGender']=="Male") { 
+                  ?>
+                  <div class="col-md-1">
+                    <input type="radio" name="Gender" value="Male" checked />Male
+                  </div>
+                  <div class="col-md-2">
+                    <input type="radio" name="Gender" value="Female" />Female
+                  </div>
+                  <?php }   
+                    if($row['empGender']=="Female") {
+                  ?>
+                  <div class="col-md-1">
+                    <input type="radio" name="Gender" value="Male" />Male
+                  </div>
+                  <div class="col-md-2">
+                    <input type="radio" name="Gender" value="Female" checked />Female
+                  </div>
+                  <?php } ?>
               </div>
-              <?php }   
-                if($row['empGender']=="Female") {
-              ?>
-              <div class="col-md-1">
-                <input type="radio" name="Gender" value="Male" />Male
+              <div class="row">
+                <div class="col-4 mb-3">Position</div>
+                <div class="col-8 mb-3">
+                  <input type="position" name="Position" class="form-control" required="required" value="<?php echo $row['empPosition']; ?>">
+                </div>
               </div>
-              <div class="col-md-2">
-                <input type="radio" name="Gender" value="Female" checked />Female
+              <div class="row">
+                <div class="col-4 mb-3">Email Address</div>
+                <div class="col-8 mb-3">
+                  <input type="email" name="Email" class="form-control" required="required" value="<?php echo $row['empEmail']; ?>" readonly>
+                </div>
               </div>
+              <div class="row">
+                <div class="col-4 mb-3">Employee Joining Date (yyyy-mm-dd)</div>
+                <div class="col-8  mb-3">
+                  <input type="text" name="regDate" class="form-control"  value="<?php echo $row['regDate']; ?>">
+                </div>
+              </div>
+
               <?php } ?>
-          </div>
-          <div class="row">
-            <div class="col-4 mb-3">Position</div>
-            <div class="col-8 mb-3">
-              <input type="position" name="Position" class="form-control" required="required" value="<?php echo $row['empPosition']; ?>">
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-4 mb-3">Email Address</div>
-            <div class="col-8 mb-3">
-              <input type="email" name="Email" class="form-control" required="required" value="<?php echo $row['empEmail']; ?>" readonly>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-4 mb-3">Employee Joining Date (yyyy-mm-dd)</div>
-            <div class="col-8  mb-3">
-              <input type="text" name="regDate" class="form-control"  value="<?php echo $row['regDate']; ?>">
-            </div>
-          </div>
+              <div class="row" style="margin-top:2%">
+                <div class="col-4"></div>
+                <div class="col-4">
+                  <input type="submit" name="submit" value="Update" class="btn btn-primary btn-user btn-block">
+                </div>
+              </div>
+            </form>
 
-          <?php } ?>
-          <div class="row" style="margin-top:2%">
-            <div class="col-4"></div>
-            <div class="col-4">
-              <input type="submit" name="submit" value="Update" class="btn btn-primary btn-user btn-block">
-            </div>
           </div>
-        </form>
-
+        </div>
       </div>
       <!-- /.container-fluid -->
 

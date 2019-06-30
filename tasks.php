@@ -100,15 +100,12 @@ if (strlen($_SESSION['uid']==0)) {
                 <div class="form-label-group">
                   <label for="startTime"><b>Start date:</b></label>
                   <br><br>
-                  <div class="input-append date form_datetime">
-                      <input size="16" type="text" value="">
-                      <span class="add-on"><i class="icon-th"></i></span>
-                  </div>
+                  <input type="datetime-local" name="startTime" class="col-3 form-control" style="margin-bottom:10px;" autofocus="autofocus">
                 </div>
               </div>  
               <div class="form-group">
                 <div class="form-label-group">
-                  <label for="finishTime"><b>End date:</b></label>
+                  <label for="finishTime"><b>Expire date:</b></label>
                   <br><br>
                   <input type="datetime-local" name="finishTime" class="col-3 form-control" style="margin-bottom:10px;" autofocus="autofocus">
                 </div>
@@ -137,7 +134,7 @@ if (strlen($_SESSION['uid']==0)) {
                     <th>Task Title</th>
                     <th>Task Description</th>
                     <th>Start Time</th>
-                    <th>End Time</th>
+                    <th>Expire Time</th>
                     <th>Status</th>
                     <th>Action</th>
                   </tr>
@@ -221,12 +218,13 @@ if (strlen($_SESSION['uid']==0)) {
   <script src="js/demo/datatables-demo.js"></script>
 
   <script type="text/javascript">
-    $(".form_datetime").datetimepicker({
-      format: "dd MM yyyy - hh:ii",
-      autoclose: true,
-      todayBtn: true,
-      pickerPosition: "bottom-left"
-    });
+    $(".form_datetime").datetimepicker({format: 'yyyy-mm-dd hh:ii'});
+    $scope.open = function() {
+      console.log('calling open');
+      $timeout( function(){
+        $scope.status.opened = true;
+      }, 50);
+    };
   </script>    
 
 </body>

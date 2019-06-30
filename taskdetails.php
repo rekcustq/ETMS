@@ -52,7 +52,26 @@ if(strlen($_SESSION['uid']==0)){
         </ol>
 
         <!-- Page Content -->
-        <h1>Blank Page</h1>
+        <div class="card mb-3">
+          <div class="card-header">
+            <i class="fas fa-table"></i>
+            Task Details
+          </div>
+          <div class="card-body">
+            <p style="font-size:16px; color:green" align="center">
+              <?php if($msg) {
+                echo $msg;
+              } ?>
+            </p>
+
+            <form class="user" method="post" action="">
+              <?php
+                $Id=$_GET['editid'];
+                $ret=mysqli_query($con,"select * from smallTasks where empId='$Id'");
+                $cnt=1;
+                while ($row=mysqli_fetch_array($ret)) { 
+              ?>
+
           <!--
               <div class="employees-input">
                 <label for=""><b> Employee ID </b></label>
@@ -70,7 +89,8 @@ if(strlen($_SESSION['uid']==0)){
               </div>
               <input type="button" class="add-staff-btn col-12 col-md-2 col-lg-2 btn btn-primary btn-block" value="Add Staff">
           -->
-
+          </div>
+        </div>
       </div>
       <!-- /.container-fluid -->
 
