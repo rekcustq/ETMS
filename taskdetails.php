@@ -1,10 +1,10 @@
 <?php
 session_start();
+error_reporting(0);
 include('includes/dbconnection.php');
 if(strlen($_SESSION['uid']==0)){
   header('location:logout.php');
-}
-else {
+} else {
 ?>
 
 <!DOCTYPE html>
@@ -18,7 +18,7 @@ else {
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Blank Page</title>
+  <title>Task Details</title>
 
   <!-- Custom fonts for this template-->
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -32,12 +32,12 @@ else {
 </head>
 
 <body id="page-top">
-  <?php include_once('includes/header.php')?>
+  <?php include_once('includes/header.php');?>
 
   <div id="wrapper">
 
     <!-- Sidebar -->
-    <?php include_once('includes/sidebar.php')?>
+    <?php include_once('includes/sidebar.php');?>
 
     <div id="content-wrapper">
 
@@ -48,13 +48,28 @@ else {
           <li class="breadcrumb-item">
             <a href="welcome.php">Dashboard</a>
           </li>
-          <li class="breadcrumb-item active">Blank Page</li>
+          <li class="breadcrumb-item active">Task Details</li>
         </ol>
 
         <!-- Page Content -->
         <h1>Blank Page</h1>
-        <hr>
-        <p>This is a great starting point for new custom pages.</p>
+          <!--
+              <div class="employees-input">
+                <label for=""><b> Employee ID </b></label>
+                <div class="employee-template input-group" hidden>
+                  <input type="empid" name="empid" id="inputEmployee" class="col-3 form-control" style="margin-bottom:10px;" placeholder="Employee ID" autofocus="autofocus">
+                  <span class="input-group-btn" style="margin-left:10px">
+                      <button class="btn btn-danger btn-block remove-employee-btn" onclick="remove_employee(this)" name="remove">
+                        <i class="far fa-trash-alt"></i>
+                      </button>
+                  </span>
+                </div>
+                <div class="input-group" >
+                  <input type="empid" name="empid" id="inputEmployee" class="col-3 form-control" style="margin-bottom:10px;" placeholder="Employee ID"  autofocus="autofocus">
+                </div>
+              </div>
+              <input type="button" class="add-staff-btn col-12 col-md-2 col-lg-2 btn btn-primary btn-block" value="Add Staff">
+          -->
 
       </div>
       <!-- /.container-fluid -->

@@ -1,12 +1,12 @@
 <?php
 session_start();
-include('includes/dbconnection.php');
 error_reporting(0);
+include('includes/dbconnection.php');
 if (strlen($_SESSION['uid']==0)) {
   header('location:logout.php');
 } else {
+  $uid=$_SESSION['uid'];
   if(isset($_POST['submit'])) {
-    $uid=$_SESSION['uid'];
     $taskTitle=$_POST['taskTitle'];
     $taskContent=$_POST['taskContent'];
     $startTime=$_POST['startTime'];
@@ -44,16 +44,20 @@ if (strlen($_SESSION['uid']==0)) {
   <link href="css/sb-admin.css" rel="stylesheet">
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/momentjs/2.14.1/moment.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css">
 
 </head>
 
 <body id="page-top">
-  <?php include_once('includes/header.php')?>
+  <?php include_once('includes/header.php');?>
 
   <div id="wrapper">
 
     <!-- Sidebar -->
-    <?php include_once('includes/sidebar.php')?>
+    <?php include_once('includes/sidebar.php');?>
 
     <div id="content-wrapper">
 
@@ -79,7 +83,7 @@ if (strlen($_SESSION['uid']==0)) {
                 echo $msg;
               } ?> 
             </p>
-            <form action="" method="post">
+            <form action="tasks.php" method="post">
               <div class="form-group">
                 <div class="form-label-group">
                   <input type="title" name="taskTitle" id="inputTitle" class="form-control" placeholder="Title" autofocus="autofocus">
@@ -96,12 +100,15 @@ if (strlen($_SESSION['uid']==0)) {
                 <div class="form-label-group">
                   <label for="startTime"><b>Start date:</b></label>
                   <br><br>
-                  <input type="datetime-local" name="startTime" class="col-3 form-control" style="margin-bottom:10px;" autofocus="autofocus">
+                  <div class="input-append date form_datetime">
+                      <input size="16" type="text" value="">
+                      <span class="add-on"><i class="icon-th"></i></span>
+                  </div>
                 </div>
               </div>  
               <div class="form-group">
                 <div class="form-label-group">
-                  <label for="finishTime"><b>Finish date:</b></label>
+                  <label for="finishTime"><b>End date:</b></label>
                   <br><br>
                   <input type="datetime-local" name="finishTime" class="col-3 form-control" style="margin-bottom:10px;" autofocus="autofocus">
                 </div>
@@ -130,15 +137,14 @@ if (strlen($_SESSION['uid']==0)) {
                     <th>Task Title</th>
                     <th>Task Description</th>
                     <th>Start Time</th>
-                    <th>Finish Time</th>
+                    <th>End Time</th>
                     <th>Status</th>
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   <?php
-                  $Id=$_SESSION("uid");
-                  $ret=mysqli_query($con,"select * from tasks");
+                  $ret=mysqli_query($con,"select * from tasks where taskCreator='$uid'");
                   $cnt=1;
                   while ($row=mysqli_fetch_array($ret)) {
                     $tStat=$row['taskStatus'];
@@ -160,23 +166,6 @@ if (strlen($_SESSION['uid']==0)) {
               </table>
             </div>
           </div>
-          <!--
-              <div class="employees-input">
-                <label for=""><b> Employee ID </b></label>
-                <div class="employee-template input-group" hidden>
-                  <input type="empid" name="empid" id="inputEmployee" class="col-3 form-control" style="margin-bottom:10px;" placeholder="Employee ID" autofocus="autofocus">
-                  <span class="input-group-btn" style="margin-left:10px">
-                      <button class="btn btn-danger btn-block remove-employee-btn" onclick="remove_employee(this)" name="remove">
-                        <i class="far fa-trash-alt"></i>
-                      </button>
-                  </span>
-                </div>
-                <div class="input-group" >
-                  <input type="empid" name="empid" id="inputEmployee" class="col-3 form-control" style="margin-bottom:10px;" placeholder="Employee ID"  autofocus="autofocus">
-                </div>
-              </div>
-              <input type="button" class="add-staff-btn col-12 col-md-2 col-lg-2 btn btn-primary btn-block" value="Add Staff">
-          -->
         </div>
       </div>
       <!-- /.container-fluid -->
@@ -230,6 +219,15 @@ if (strlen($_SESSION['uid']==0)) {
 
   <!-- Demo scripts for this page-->
   <script src="js/demo/datatables-demo.js"></script>
+
+  <script type="text/javascript">
+    $(".form_datetime").datetimepicker({
+      format: "dd MM yyyy - hh:ii",
+      autoclose: true,
+      todayBtn: true,
+      pickerPosition: "bottom-left"
+    });
+  </script>    
 
 </body>
 
