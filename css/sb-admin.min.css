@@ -6089,10 +6089,8 @@ a.badge-dark:focus {
   -webkit-box-pack: center;
   -ms-flex-pack: center;
   justify-content: center;
-  color: #fff;
   text-align: center;
   white-space: nowrap;
-  background-color: #007bff;
   -webkit-transition: width .6s ease;
   transition: width .6s ease
 }
@@ -6102,6 +6100,16 @@ a.badge-dark:focus {
     -webkit-transition: none;
     transition: none
   }
+}
+
+.progress-bar-success {
+  color: #fff;
+  background-color: #5cb85c
+}
+
+.progress-bar-info {
+  color: #da5c58;
+  background-color: #f0ad4e
 }
 
 .progress-bar-striped {
