@@ -7,33 +7,36 @@ if(strlen($_SESSION['uid']==0)){
 } else {
   $taskId=$_GET['editid'];
   if(isset($_POST['submit_smtask'])) {
-    $smTaskTitle=$_POST['taskTitle'];
-    $smTaskContent=$_POST['taskContent'];
-    $status=$_POST['status'];
-    $query=mysqli_query($con, "insert into smallTasks (smTaskTitle, smTaskContent) values ('$smTaskTitle', '$smTaskContent') ");
-    $smTskId=mysqli_fetch_array(mysqli_query($con,"select smTaskId from smallTasks where smTaskTitle='$smTaskTitle', smTaskContent='$smTaskContent' "));
-    $smTaskId=$smTskId['smTaskId'];
-    $query=mysqli_query($con, "insert into taskLink (taskId, smTaskId, status) values ('$taskId', '$smTaskId', '$status') ");
-    if ($query) {
-      $msg="Employee profile has been updated.";
-    } else {
-      $msg="Something Went Wrong. Please try again.";
+    $tskList=$_POST['checkList'];
+    foreach ($tskList as $id) {
+      echo $id.' ';
+      $smTaskId=$id;
+      $query=mysqli_query($con, "update taskLink set status=3-status where smTaskId='$smTaskId'");
+      if (!$query) {
+        $msg2="Something Went Wrong. Please try again.";
+      }
     }
+    if ($query)
+      $msg2="Task details has been updated.";
   }
   if(isset($_POST['submit_emp'])) {
-    $empId=$_POST['empId'];
-    $smTaskTitle=$_POST['taskTitle'];
-    $smTaskContent=$_POST['taskContent'];
-    $status=$_POST['status'];
-    $query=mysqli_query($con, "insert into smallTasks (smTaskTitle, smTaskContent, status) values ('$smTaskTitle', '$smTaskContent', '$status') ");
-    $smTskId=mysqli_fetch_array(mysqli_query($con,"select smTaskId from smallTasks where smTaskTitle='$smTaskTitle', smTaskContent='$smTaskContent' "));
-    $smTaskId=$smTskId['smTaskId'];
-    $query=mysqli_query($con, "insert into taskLink (taskId, smTaskId, status) values ('$taskId', '$smTaskId', '$status') ");
-    if ($query) {
-      $msg="Employee profile has been updated.";
-    } else {
-      $msg="Something Went Wrong. Please try again.";
+    $empList=$_POST['empList'];
+    foreach ($empList as $empId) {
+      $query=mysqli_query($con, "insert into empTask (empId, taskId) values ('$empId', '$taskId');");
+      if (!$query) {
+        $msg="Something Went Wrong. Please try again.";
+      }
     }
+    if ($query)
+      $msg="Employee list has been updated.";
+  }
+  if(isset($_POST['removeStaff'])) {
+    $no=$_POST['noET'];
+    $query=mysqli_query($con, "delete from empTask where no=$no;");
+    if ($query)
+      $msg="Employee list has been updated.";
+    else
+      $msg="Something Went Wrong. Please try again.";
   }
 ?>
 
@@ -82,6 +85,11 @@ if(strlen($_SESSION['uid']==0)){
         </ol>
 
         <!-- Page Content -->
+        <p style="font-size:16px; color:green" align="center"> 
+          <?php if($msg) {
+            echo $msg;
+          } ?> 
+        </p>
         <div class="card mb-3">
           <div class="card-header">
             <?php
@@ -89,30 +97,30 @@ if(strlen($_SESSION['uid']==0)){
               $row=mysqli_fetch_array($ret);
             ?>
             <div class="row">
-              <div class="col-2 mb-3">Task name: </div>
+              <div class="col-2 mb-3"><b> Task name </b></div>
               <div class="col-8 mb-3">
                 <input type="text" name="taskTitle" class="form-control" required="required" value="<?php echo $row['taskTitle']; ?>" readonly>
               </div>
             </div>
             <div class="row">
-              <div class="col-2 mb-3">Task description: </div>
+              <div class="col-2 mb-3"><b> Task description </b></div>
               <div class="col-8 mb-3">
                 <input type="text" name="taskContent" class="form-control" required="required" value="<?php echo $row['taskContent']; ?>" readonly>
               </div>
             </div>
             <div class="row">
-              <div class="col-2 mb-3">Start time: </div>
+              <div class="col-2 mb-3"><b> Start time </b></div>
               <div class="col-2 mb-3">
                 <input type="text" name="startTime" class="form-control" required="required" value="<?php echo $row['taskStartTime']; ?>" readonly>
               </div>
               <div class="col-1 mb-3"></div>
-              <div class="col-2 mb-3">Expired time: </div>
+              <div class="col-2 mb-3"><b> Expired time </b></div>
               <div class="col-2 mb-3">
                 <input type="text" name="finishTime" class="form-control" required="required" value="<?php echo $row['taskFinishTime']; ?>" readonly>
               </div>
             </div>
             <div class="row">
-              <div class="col-2 mb-3">Task creator: </div>
+              <div class="col-2 mb-3"><b> Task creator </b></div>
               <div class="col-8 mb-3">
                 <?php
                   $tmp=$row['taskCreator'];
@@ -122,91 +130,109 @@ if(strlen($_SESSION['uid']==0)){
                 <input type="text" name="taskCreator" class="form-control" required="required" value="<?php echo $row['empName']; ?>" readonly>
               </div>
             </div>
+            <!-- show and remove staff -->
             <div class="row">
-              <div class="col-2 mb-3">Task employees: </div>
-              <div class="col-8 mb-3">
-                <input type="text" name="taskCreator" class="form-control" required="required" value="<?php echo $row['empName']; ?>" readonly>
-              </div>
+              <div class="col-2 mb-3"><b> Task employees list </b></div>
             </div>
+            <?php
+              $ret=mysqli_query($con,"select no, empName from employees inner join emptask on emptask.empId=employees.empId where empTask.taskId='$taskId'");
+              while ($row=mysqli_fetch_array($ret)) {
+            ?>
+            <form action="" method="post">
+              <div class="row">
+                <div class="col-2 mb-3"></div>
+                <div class="input-group col-8 mb-3">
+                  <input type="text" name="empName" class="form-control" required="required" value="<?php echo $row['empName']; ?>" readonly>
+                  <input name="noET" value="<?php echo $row['no']; ?>" hidden>
+                  <span class="input-group-btn" style="margin-left:10px">
+                    <button type="submit" name="removeStaff" class="btn btn-danger">
+                      <i class="far fa-trash-alt"></i>
+                    </button>
+                  </span>
+                </div>
+              </div>
+            </form>
+            <?php } ?>
+            <!-- add staff -->
             <div class="row">
               <div class="col-2 mb-3"></div>
               <div class="col-8 mb-3">
-                <?php
-                  $ret=mysqli_query($con,"select empName from employees, empTask where empTask.taskId='$taskId' group by employees.empId");
-                  $row=mysqli_fetch_array($ret);
-                ?>
-                <input type="text" name="taskCreator" class="form-control" required="required" value="<?php echo $row['empName']; ?>" readonly>
+                <form action="" method="post">
+                  <div class="employees-input">
+                    <div class="employee-template input-group" hidden>
+                      <input type="empid" name="empList[]" id="empList" class="col-3 form-control" style="margin-bottom:10px;" placeholder="Employee ID" autofocus="autofocus">
+                      <span class="input-group-btn" style="margin-left:10px">
+                          <button class="btn btn-danger btn-block remove-employee-btn" onclick="remove_employee(this)" name="remove">
+                            <i class="far fa-trash-alt"></i>
+                          </button>
+                      </span>
+                    </div>
+                    <div class="input-group" >
+                      <input type="empid" name="empList[]" id="empList" class="col-3 form-control" style="margin-bottom:10px;" placeholder="Employee ID"  autofocus="autofocus">
+                    </div>
+                  </div>
+                  <input type="button" class="add-staff-btn col-12 col-md-2 col-lg-2 btn btn-primary btn-block" value="Add Staff">
+                  <div class="row" style="margin-top:2%">
+                    <div class="col-4"></div>
+                    <div class="col-4">
+                      <input type="submit" name="submit_emp" value="Update staff" class="btn btn-primary btn-user btn-block">
+                    </div>
+                  </div>
+                </form>
               </div>
             </div>
           </div>
+          <!-- small task details -->
           <div class="card-body">
             <p style="font-size:16px; color:green" align="center">
               <?php if($msg) {
-                echo $msg;
+                echo $msg2;
               } ?>
             </p>
 
-            <div class="table-responsive">
-              <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                <thead>
-                  <tr>
-                    <th>Task no.</th>
-                    <th>Task Title</th>
-                    <th>Task Content</th>
-                    <th>Completed</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <?php
-                  $ret=mysqli_query($con,"select * from taskLink, smallTasks where taskLink.tasksId='$taskId' group by smallTasks.smTaskId");
-                  $cnt=1;
-                  while ($row=mysqli_fetch_array($ret)) {
-                  ?>
+            <form method="post" action="">
+              <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead>
                     <tr>
-                      <td><?php echo $cnt;?></td>
-                      <td><?php echo $row['smTaskTitle'];?></td>
-                      <td><?php echo $row['smTaskContent'];?></td>
-                      <?php 
-                        if($row['status']=="3") {
-                      ?>
-                      <td><input type="checkbox" checked></td>
-                      <?php
-                        } else {
-                      ?>
-                      <td><input type="checkbox"></td>
-                      <?php } ?>
+                      <th>Task no.</th>
+                      <th>Task Title</th>
+                      <th>Task Content</th>
+                      <th>Completed</th>
                     </tr>
-                  <?php 
-                  $cnt=$cnt+1;
-                  } ?>
-                </tbody>
-              </table>
-            </div>
-
-          <!--
-              <div class="employees-input">
-                <label for=""><b> Employee ID </b></label>
-                <div class="employee-template input-group" hidden>
-                  <input type="empid" name="empid" id="inputEmployee" class="col-3 form-control" style="margin-bottom:10px;" placeholder="Employee ID" autofocus="autofocus">
-                  <span class="input-group-btn" style="margin-left:10px">
-                      <button class="btn btn-danger btn-block remove-employee-btn" onclick="remove_employee(this)" name="remove">
-                        <i class="far fa-trash-alt"></i>
-                      </button>
-                  </span>
-                </div>
-                <div class="input-group" >
-                  <input type="empid" name="empid" id="inputEmployee" class="col-3 form-control" style="margin-bottom:10px;" placeholder="Employee ID"  autofocus="autofocus">
+                  </thead>
+                  <tbody>
+                    <?php
+                    $ret=mysqli_query($con,"select no, smTaskTitle, smTaskContent, taskLink.status from taskLink inner join smallTasks on taskLink.smTaskId=smallTasks.smTaskId where taskLink.tasksId='$taskId'");
+                    $cnt=1;
+                    while ($row=mysqli_fetch_array($ret)) {
+                    ?>
+                      <tr>
+                        <td><?php echo $cnt;?></td>
+                        <td><?php echo $row['smTaskTitle'];?></td>
+                        <td><?php echo $row['smTaskContent'];?></td>
+                        <td><input type="checkbox" name="checkList[]" value="<?php echo $row['no'];?>" <?php echo ($row['status']=='2')?"checked":"";?> ></td>
+                      </tr>
+                    <?php 
+                    $cnt=$cnt+1;
+                    } ?>
+                  </tbody>
+                </table>
+              </div>
+              <div class="row" style="margin-top:2%">
+                <div class="col-4"></div>
+                <div class="col-4">
+                  <input type="submit" name="submit_smtask" value="Update" class="btn btn-primary btn-user btn-block">
                 </div>
               </div>
-              <input type="button" class="add-staff-btn col-12 col-md-2 col-lg-2 btn btn-primary btn-block" value="Add Staff">
-          -->
+            </form>
           </div>
         </div>
       </div>
       <!-- /.container-fluid -->
 
-      <!-- Sticky Footer -->
-      <?php include_once('includes/footer.php');?>
+      <!-- Sticky Footer --
+      <?php //include_once('includes/footer.php');?>-->
 
     </div>
     <!-- /.content-wrapper -->

@@ -12,7 +12,7 @@ if (strlen($_SESSION['uid']==0)) {
     $startTime=$_POST['startTime'];
     $finishTime=$_POST['finishTime'];
     
-    $query=mysqli_query($con, "insert into tasks(taskCreator, taskTitle, taskContent, taskStartTime, taskFinishTime, taskStatus) values('$uid', '$taskTitle', '$taskContent', '$startTime', '$finishTime', '1')");
+    $query=mysqli_query($con, "insert into tasks(taskCreator, taskTitle, taskContent, taskStartTime, taskFinishTime, taskTotal, taskComplete) values('$uid', '$taskTitle', '$taskContent', '$startTime', '$finishTime', '0', '0')");
     if ($query) {
       $msg="Task created succeesfully.";
     } else {
@@ -69,17 +69,17 @@ if (strlen($_SESSION['uid']==0)) {
         </ol>
 
         <!-- Create new task-->
+        <p style="font-size:16px; color:green" align="center"> 
+          <?php if($msg) {
+            echo $msg;
+          } ?> 
+        </p>
         <div class="card mb-3 task-form" hidden>
           <div class="card-header">
             <i class="fas fa-table"></i>
             Tasks Form
           </div>
           <div class="card-body">
-            <p style="font-size:16px; color:green" align="center"> 
-              <?php if($msg) {
-                echo $msg;
-              } ?> 
-            </p>
             <form action="tasks.php" method="post">
               <div class="form-group">
                 <div class="form-label-group">

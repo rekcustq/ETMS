@@ -12,7 +12,7 @@ if (strlen($_SESSION['uid']==0)) {
     $startTime=$_POST['startTime'];
     $finishTime=$_POST['finishTime'];
     
-    $query=mysqli_query($con, "insert into tasks(taskCreator, taskTitle, taskContent, taskStartTime, taskFinishTime, taskStatus) values('$uid', '$taskTitle', '$taskContent', '$startTime', '$finishTime', '1')");
+    $query=mysqli_multi_query($con, "insert into tasks(taskCreator, taskTitle, taskContent, taskStartTime, taskFinishTime, taskTotal, taskComplete) values('$uid', '$taskTitle', '$taskContent', '$startTime', '$finishTime', '0', '0'); insert into emptask(empId, taskId) values('$uid', LAST_INSERT_ID());");
     if ($query) {
       $msg="Task created succeesfully.";
     } else {
@@ -41,14 +41,13 @@ if (strlen($_SESSION['uid']==0)) {
   <link href="vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet">
 
   <!-- Custom styles for this template-->
-  <link href="css/sb-admin.css" rel="stylesheet">
+  <link href="css/sb-admin.min.css" rel="stylesheet">
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/momentjs/2.14.1/moment.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css">
-
+  
 </head>
 
 <body id="page-top">
@@ -72,17 +71,17 @@ if (strlen($_SESSION['uid']==0)) {
         </ol>
 
         <!-- Create new task-->
+        <p style="font-size:16px; color:green" align="center"> 
+          <?php if($msg) {
+            echo $msg;
+          } ?> 
+        </p>
         <div class="card mb-3 task-form" hidden>
           <div class="card-header">
             <i class="fas fa-table"></i>
             Tasks Form
           </div>
           <div class="card-body">
-            <p style="font-size:16px; color:green" align="center"> 
-              <?php if($msg) {
-                echo $msg;
-              } ?> 
-            </p>
             <form action="tasks.php" method="post">
               <div class="form-group">
                 <div class="form-label-group">
@@ -144,8 +143,10 @@ if (strlen($_SESSION['uid']==0)) {
                   $ret=mysqli_query($con,"select * from tasks where taskCreator='$uid'");
                   $cnt=1;
                   while ($row=mysqli_fetch_array($ret)) {
-                    $tStat=$row['taskStatus'];
-                    $stat=mysqli_fetch_array(mysqli_query($con,"select statDescription from status where stat='$tStat'"));
+                    if ($row['taskTotal'])
+                      $tskPercent=round($row['taskComplete']*100/$row['taskTotal'], 2);
+                    else
+                      $tskPercent=100;
                   ?>
                     <tr>
                       <td><?php echo $cnt;?></td>
@@ -153,7 +154,20 @@ if (strlen($_SESSION['uid']==0)) {
                       <td><?php echo $row['taskContent'];?></td>
                       <td><?php echo $row['taskStartTime'];?></td>
                       <td><?php echo $row['taskFinishTime'];?></td>
-                      <td><?php echo $stat['statDescription'];?></td>
+                      <!--<td><?php //echo number_format((float)$tskPercent, 0, '.', '');?>%</td>-->
+                      <?php if($tskPercent==100) { ?>
+                      <td class="background background__pass">
+                        <div class="progress-bar progress-bar-success progress-bar-striped" style="width: 100%">
+                          Completed
+                        </div>
+                      </td>
+                      <?php } else { ?>
+                      <td class="background background__running">
+                        <div class="progress-bar progress-bar-info progress-bar-striped progress-bar-animated" style="width: <?php echo $tskPercent;?>%">
+                          <?php echo $tskPercent;?>%
+                        </div>
+                      </td>
+                      <?php } ?>
                       <td><a href="taskdetails.php?editid=<?php echo $row['taskId'];?>">Task Details</a></td>
                     </tr>
                   <?php 
@@ -216,16 +230,6 @@ if (strlen($_SESSION['uid']==0)) {
 
   <!-- Demo scripts for this page-->
   <script src="js/demo/datatables-demo.js"></script>
-
-  <script type="text/javascript">
-    $(".form_datetime").datetimepicker({format: 'yyyy-mm-dd hh:ii'});
-    $scope.open = function() {
-      console.log('calling open');
-      $timeout( function(){
-        $scope.status.opened = true;
-      }, 50);
-    };
-  </script>    
 
 </body>
 
