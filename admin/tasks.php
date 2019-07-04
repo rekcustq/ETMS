@@ -2,10 +2,24 @@
 session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
-if (strlen($_SESSION['uid']==0)) {
+
+if(isset($_POST['Login'])) {
+  $Email=$_POST['email'];
+  $password=$_POST['password'];
+  $query=mysqli_query($con,"select id from admin where email='$Email' && password='$password' ");
+  $ret=mysqli_fetch_array($query);
+  if($ret>0){
+    $_SESSION['aid']=$ret['id'];
+    header('location:welcome.php');
+  } else {
+    $msg="Invalid Details.";
+  }
+}
+
+if (strlen($_SESSION['aid']==0)) {
   header('location:logout.php');
 } else {
-  $uid=$_SESSION['uid'];
+  $uid=$_SESSION['aid'];
   if(isset($_POST['submit'])) {
     $taskTitle=$_POST['taskTitle'];
     $taskContent=$_POST['taskContent'];
@@ -35,13 +49,13 @@ if (strlen($_SESSION['uid']==0)) {
   <title>Tasks</title>
 
   <!-- Custom fonts for this template-->
-  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
 
   <!-- Page level plugin CSS-->
-  <link href="vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet">
+  <link href="../vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet">
 
   <!-- Custom styles for this template-->
-  <link href="css/sb-admin.min.css" rel="stylesheet">
+  <link href="../css/sb-admin.min.css" rel="stylesheet">
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/momentjs/2.14.1/moment.min.js"></script>
@@ -140,7 +154,7 @@ if (strlen($_SESSION['uid']==0)) {
                 </thead>
                 <tbody>
                   <?php
-                  $ret=mysqli_query($con,"select * from tasks inner join empTask on tasks.taskId=empTask.taskId where empTask.empId='$uid'");
+                  $ret=mysqli_query($con,"select * from tasks");
                   $cnt=1;
                   while ($row=mysqli_fetch_array($ret)) {
                     if ($row['taskTotal'])
@@ -215,21 +229,21 @@ if (strlen($_SESSION['uid']==0)) {
   </div>
 
   <!-- Bootstrap core JavaScript-->
-  <script src="vendor/jquery/jquery.min.js"></script>
-  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="../vendor/jquery/jquery.min.js"></script>
+  <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
   <!-- Core plugin JavaScript-->
-  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+  <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
 
   <!-- Page level plugin JavaScript-->
-  <script src="vendor/datatables/jquery.dataTables.min.js"></script>
-  <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+  <script src="../vendor/datatables/jquery.dataTables.min.js"></script>
+  <script src="../vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
   <!-- Custom scripts for all pages-->
-  <script src="js/sb-admin.min.js"></script>
+  <script src="../js/sb-admin.min.js"></script>
 
   <!-- Demo scripts for this page-->
-  <script src="js/demo/datatables-demo.js"></script>
+  <script src="../js/demo/datatables-demo.js"></script>
 
 </body>
 

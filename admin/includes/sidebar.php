@@ -10,4 +10,9 @@
       <i class="fas fa-fw fa-table"></i>
       <span>All Employees</span></a>
   </li>
+  <li class="nav-item">
+    <a class="nav-link" href="tasks.php">
+      <i class="fas fa-fw fa-table"></i>
+      <span>All Tasks</span></a>
+  </li>
 </ul>

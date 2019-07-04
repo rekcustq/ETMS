@@ -2,10 +2,9 @@
 session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
-if(strlen($_SESSION['uid']==0)){
+if(strlen($_SESSION['aid']==0)){
   header('location:logout.php');
 } else {
-  $uid=$_SESSION['uid'];
   $taskId=$_GET['editid'];
   if(isset($_POST['submitSmTask'])) {
     $taskTitle=$_POST['taskTitle'];
@@ -13,7 +12,7 @@ if(strlen($_SESSION['uid']==0)){
     
     $query=mysqli_multi_query($con, "insert into smallTasks(smTaskTitle, smTaskContent, status) values('$taskTitle', '$taskContent', '1'); 
 		insert into taskLink(tasksId, smTaskId, status) values('$taskId', LAST_INSERT_ID(), '1');
-		update tasks set taskTotal=taskTotal+1 where taskId='$taskId';");
+		update tasks set taskTotal=1+taskTotal where taskId='$taskId';");
     if ($query) {
       $msgSmTask="Task created succeesfully.";
     } else {
@@ -24,15 +23,9 @@ if(strlen($_SESSION['uid']==0)){
     $tskList=$_POST['checkList'];
     foreach ($tskList as $id) {
       //echo $id.' ';
-	  $row=mysqli_fetch_array(mysqli_query($con, "select status from taskLink where no='$id';"));
-	  $col=mysqli_fetch_array(mysqli_query($con, "select taskCreator from tasks where tasksId=$taskId;"));
-	  if($col['taskCreator']==$uid)
-	  if($row['status']=='1')
-		$query=mysqli_multi_query($con, "update taskLink set status=2 where no='$id';
-		  update tasks set taskComplete=taskComplete+1 where taskId='$taskId';");
-	  else
-		$query=mysqli_multi_query($con, "update taskLink set status=1 where no='$id';
-		  update tasks set taskComplete=taskComplete-1 where taskId='$taskId';");
+      $smTaskId=$id;
+      $query=mysqli_multi_query($con, "update taskLink set status=2 where smTaskId='$smTaskId';
+		update tasks set taskComplete=taskComplete+1 where taskId='$taskId';");
       if (!$query) {
         $msg2="Something Went Wrong. Please try again.";
       }
@@ -75,13 +68,13 @@ if(strlen($_SESSION['uid']==0)){
   <title>Task Details</title>
 
   <!-- Custom fonts for this template-->
-  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
 
   <!-- Page level plugin CSS-->
-  <link href="vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet">
+  <link href="../vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet">
 
   <!-- Custom styles for this template-->
-  <link href="css/sb-admin.css" rel="stylesheet">
+  <link href="../css/sb-admin.css" rel="stylesheet">
 
 </head>
 
@@ -232,10 +225,10 @@ if(strlen($_SESSION['uid']==0)){
                         <td><?php echo $cnt;?></td>
                         <td><?php echo $row['smTaskTitle'];?></td>
                         <td><?php echo $row['smTaskContent'];?></td>
-                        <td><input type="checkbox" name="checkList[]" value="<?php echo $row['no'];?>" <?php echo ($row['status']=='2')?"checked readonly":"";?> ></td>
+                        <td><input type="checkbox" name="checkList[]" value="<?php echo $row['no'];?>" <?php echo ($row['status']=='2')?"checked":"";?> ></td>
                       </tr>
                     <?php 
-                      $cnt=$cnt+1;
+                    $cnt=$cnt+1;
                     } ?>
                   </tbody>
                 </table>
@@ -321,14 +314,14 @@ if(strlen($_SESSION['uid']==0)){
   </div>
 
   <!-- Bootstrap core JavaScript-->
-  <script src="vendor/jquery/jquery.min.js"></script>
-  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="../vendor/jquery/jquery.min.js"></script>
+  <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
   <!-- Core plugin JavaScript-->
-  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+  <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
 
   <!-- Custom scripts for all pages-->
-  <script src="js/sb-admin.min.js"></script>
+  <script src="../js/sb-admin.min.js"></script>
 
 </body>
 
